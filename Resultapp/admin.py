@@ -1,0 +1,8 @@
+from django.contrib import admin
+from .models import *
+
+admin.site.register(Semester)
+admin.site.register(Subject)
+admin.site.register(SubjectCombination)
+admin.site.register(Result)
+admin.site.register(Notice)

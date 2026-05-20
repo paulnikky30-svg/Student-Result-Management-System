@@ -1,0 +1,231 @@
+add Result
+
+
+{% extends 'admin_base.html' %} 
+
+{% block content %}
+
+<div class="container mt-5">
+    <div class="card shadow p-4">
+
+        <h3 class="text-center mb-4">DECLARE RESULT</h3>
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <!-- Select Semester -->
+            <div class="mb-3">
+                <label class="form-label">Select Semester</label>
+                <select class="form-control" name="semester" required>
+                    <option value="">Choose Semester</option>
+
+                    {% for i in semester %}
+                    <option value="{{i.id}}">
+                        {{i.semester_name}}
+                    </option>
+                    {% endfor %}
+
+                </select>
+            </div>
+
+            <!-- Select Student -->
+            <div class="mb-3">
+                <label class="form-label">Select Student</label>
+                <select class="form-control" name="student" required>
+                    <option value="">Choose Student</option>
+
+                    {% for i in students %}
+                    <option value="{{i.id}}">
+                        {{i.name}}
+                    </option>
+                    {% endfor %}
+
+                </select>
+            </div>
+
+            <!-- Enter Marks -->
+            <div class="mb-3">
+                <label class="form-label">Enter Marks</label>
+                <input type="number"
+                       class="form-control"
+                       name="marks"
+                       placeholder="Enter Marks"
+                       required>
+            </div>
+
+            <!-- Save Button -->
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary">
+                    Save Result
+                </button>
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
+<div style="height: 100px;"></div>
+
+{% endblock %}
+
+
+
+views.py 
+
+def add_result(request):
+    # Semester dropdown ke liye data fetch karna
+    semesters = Semester.objects.all()
+    students = Students.objects.all()
+
+    if request.method == 'POST':
+        # Form se data nikalna (HTML ke 'name' attribute se)
+        f_name = request.POST.get('full_name')
+        f_roll = request.POST.get('roll_id')
+        f_email = request.POST.get('email')
+        f_gender = request.POST.get('gender')
+        f_dob = request.POST.get('dob')
+        f_semester_id = request.POST.get('semester')
+
+        try:
+            # Foreign Key object nikalna
+            semester_obj = Semester.objects.get(id=f_semester_id)
+            
+            # Database mein save karna (Models.py ke fields use kiye hain)
+            student = Students(
+                name = f_name,               # Models.py mein 'name' hai
+                roll_id = f_roll,
+                email = f_email,
+                gender = f_gender,
+                dob = f_dob,
+                student_semester = semester_obj # Models.py mein 'student_semester' hai
+            )
+            student.save()
+
+            messages.success(request, "Student Info Added Successfully!")
+            return redirect('add_student')
+
+        except Exception as e:
+            messages.error(request, f"Error: {e}")
+
+    context = {
+        'semester': semesters,
+        'students' : students,
+    }
+    return render(request, 'add_result.html',context)
+
+
+
+Models.py    
+
+
+class Result(models.Model):
+    student = models.ForeignKey(Students, on_delete=models.CASCADE)
+    student_semester = models.ForeignKey(Semester, on_delete=models.SET_NULL, null=True)
+    subject = models.ForeignKey(Subject, on_delete=models.SET_NULL, null=True)
+    marks = models.IntegerField()
+    creation_date = models.DateTimeField(auto_now_add=True)
+
+    def _str_(self):
+        return f"{self.student} - {self.subject} - {self.marks}"
+
+
+urls.py
+
+from Resultapp.views import *
+path('add_result/',add_result, name='add_result'),   
+
+
+  <li class="nav-item">
+                <a href="" class="nav-link">
+                   <i class="fas fa-list me-1"></i> Manage Results
+                </a>
+            </li>
+
+
+<base href="" class="html">
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Result Management System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow">
+  <div class="container">
+    <a class="navbar-brand" href="#"><i class="fas fa-school me-1"></i> AcademiaX</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" > 
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ms-auto text-uppercase">
+        <li class="nav-item">
+          <a class="nav-link active" href="{% url 'home' %}">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Student Result</a>
+        </li>
+    </li class="nav-item">
+        <a class="nav-link" href="{% url 'admin-login'%}">Admin</a>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+{% block content %}
+
+{% endblock %}
+
+
+
+ <footer class="py-2  bg-dark text-white text-center mt-auto">
+<div class="container text-center">
+  <p>copyright &copy; 2026 Student Result Management System</p> 
+   </div>
+  </footer>            
+
+base.html
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Result Management System</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+</head>
+
+<body>
+
+    {% include 'topbar.html' %}
+
+    <div class="container-fluid">
+        <div class="row">
+
+            <!-- Sidebar -->
+            <div class="col-md-3 p-0">
+                {% include 'sidebar.html' %}
+            </div>
+
+            <!-- Main Content -->
+            <main class="col-md-9 p-3">
+                {% block content %}
+                {% endblock %}
+            </main>
+
+        </div>
+    </div>
+
+</body>
+</html>

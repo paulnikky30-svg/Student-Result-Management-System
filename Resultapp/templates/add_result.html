@@ -1,0 +1,160 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container mt-5">
+
+    <div class="card shadow-lg border-0 p-4">
+
+        <h2 class="text-center fw-bold mb-4">
+            Student Result Section
+        </h2>
+
+        <!-- Form Start -->
+        <form method="POST">
+            {% csrf_token %}
+
+            <div class="row">
+
+                <!-- Roll Number -->
+                <div class="col-md-6 mb-3">
+
+                    <label class="form-label fw-semibold">
+                        Roll Number
+                    </label>
+
+                    <input type="text"
+                           name="roll"
+                           class="form-control form-control-lg"
+                           placeholder="Enter Roll Number"
+                           required>
+
+                </div>
+
+                <!-- Course -->
+                <div class="col-md-6 mb-3">
+
+                    <label class="form-label fw-semibold">
+                        Select Course
+                    </label>
+
+                    <select name="course"
+                            class="form-select form-select-lg"
+                            required>
+
+                        <option value="">Select Course</option>
+
+                        <option>BCA</option>
+                        <option>B.Tech</option>
+                        <option>B.tech -EEE</option>
+                        <option>B.tech -ME</option>
+                        <option>B.tech -DS</option>
+                        <option>MCA</option>
+                        <option>B.A & M.A-English(Hons.)</option>
+                        <option>B.A & M.A-Journal & Mass Com.(Hons)</option>
+                        <option>BFA(Bachelor of Fine Arts)</option>
+                        <option>Diploma in Fine Arts</option>
+                        <option>Diploma-yoga and naturopathy</option>
+                        <option>B.sc-yoga and naturopathy</option>
+                        <option>M.sc-yoga and naturopathy</option>
+                        <option>BCA in Web Development</option>
+                        <option>BCA in generative AI</option>
+                        <option>BBA</option>
+                        <option>M.Com</option>
+                        <option>B.Com Business Analytics with IBM</option>
+                        <option>Diploma -Mechanical(ME)</option>
+                        <option>Diploma -Mechatronics</option>
+                        <option>M.A -Education</option>
+                        <option>PhD -Eduction</option>
+                        <option>M.Tech -EEE</option>
+                        <option>M.Tech -Computer Science</option>
+                        <option>PhD -Chemistry</option>
+                        <option>PhD -English</option>
+                        <option>PhD -Physics</option>
+                        <option>PhD -Mathematics</option>
+                        <option>PhD -yoga</option>
+                        <option>PhD -pharmacy</option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+            <!-- Button -->
+            <div class="text-center mt-3">
+
+                <button type="submit"
+                        class="btn btn-primary px-5 py-2">
+                    Check Result
+                </button>
+
+            </div>
+
+        </form>
+
+        <!-- Result Section -->
+        {% if results %}
+
+        <div class="mt-5">
+
+            <h3 class="text-center mb-4">
+                Result Details
+            </h3>
+
+            <table class="table table-bordered table-hover text-center">
+
+                <thead class="table-warning">
+
+                    <tr>
+                        <th>Subject</th>
+                        <th>Marks</th>
+                        <th>Status</th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for r in results %}
+
+                    <tr>
+
+                        <td>{{ r.subject }}</td>
+
+                        <td>{{ r.marks }}</td>
+
+                        <td>
+
+                            {% if r.marks >= 40 %}
+
+                            <span class="badge bg-success">
+                                Pass
+                            </span>
+
+                            {% else %}
+
+                            <span class="badge bg-danger">
+                                Fail
+                            </span>
+
+                            {% endif %}
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}

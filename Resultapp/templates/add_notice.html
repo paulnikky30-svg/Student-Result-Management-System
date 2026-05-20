@@ -1,0 +1,46 @@
+{% extends 'admin_base.html' %} 
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="card shadow">
+        <div class="card-header py-3">
+            <h4 class="m-0 font-weight-bold text-primary">
+                <i class="fa fa-user-plus"></i> Add Notice
+            </h4>
+        </div>
+        <div class="card-body">
+            {% if messages %}
+                {% for message in messages %}
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                {% endfor %}
+            {% endif %}
+
+            <form method="post" action="">
+                {% csrf_token %}
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="title" class="form-label">Notice Title</label>
+                        <input type="text" class="form-control" id="title" name="title"  required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="details" class="form-label">Notice Details</label>
+                        <textarea type="text" class="form-control" rows="5" id="details" name="details" required>
+                        </textarea>
+                        </div>
+                </div>
+                    <button type="submit" class="btn btn-success btn-lg px-5">
+                        <i class="fa fa-save"></i> Submit
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div style="height: 100px;"></div>
+
+{% endblock %}
